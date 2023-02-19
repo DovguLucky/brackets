@@ -1,41 +1,43 @@
 module.exports = function check(str, bracketsConfig) {
   let string = str;
   let obj = {};
+  let res = true;
+  let arr = [];
 
   function isArr(x) {
     x.forEach(el => {
       if (Array.isArray(el)) {
-        let q = String(el.splice(1, 1));
-        obj[String(el.splice(0, 1))] = q;
+        let q = el.slice(1, 2).join('');
+        obj[q] = el.slice(0, 1).join('');
       }
     })
   }
+  isArr(bracketsConfig)
 
-  let arrStr = string.split('');
-
-  function del() {
-    arrStr.forEach((el, index) => {
+  arr = string.split('')
+  let steck = []
+  function stk() {
+    arr.forEach(el => {
       for (let key in obj) {
-        let second = arrStr[index + 1];
-        if( el === key && second === obj[key] ){
-          arrStr.splice(index, 2)
-          del(arrStr)
+        if (el === key && obj[key] === steck[steck.length - 1] && steck.length !== 0) {
+          steck.pop(steck[steck.length - 1])
+          break
+        } else if (el === obj[key]) {
+          steck.push(el)
+          break;
+        } else if (steck.length === 0 && el === key) {
+          res = 'false'
+          return res;
+        } else if (el === key && obj[key] === steck[steck.length - 1] && steck.length !== 0) {
         }
       }
     })
   }
-
-
-  isArr(bracketsConfig)
-  del(arrStr)
-  let l = arrStr.length;
-let res = 0;
-  if(l > 0) {
-    res = false;
-  }  else {
-    res = true;
+  stk()
+  if (steck.length === 0 && res === true ) {
+    res = true
+  } else {
+    res = false
   }
-
   return res;
 }
-
